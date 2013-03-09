@@ -20,6 +20,6 @@ local.properties
 *.ipr
 *.iws
 .idea/
-*target/*
+*/target*
 
 *APIKEY*
