@@ -41,5 +41,11 @@
 
 	</FrameLayout>
 
+	<com.heinrisch.minsida.views.DeviationView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:id="@+id/deviation"
+					android:visibility="gone"/>
+
 </LinearLayout>
 

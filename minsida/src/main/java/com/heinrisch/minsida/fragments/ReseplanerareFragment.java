@@ -15,8 +15,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.heinrisch.minsida.*;
 import com.heinrisch.minsida.models.DPSDepartures;
+import com.heinrisch.minsida.models.Deviation;
 import com.heinrisch.minsida.models.Reseplanerare;
 import com.heinrisch.minsida.models.Time;
+import com.heinrisch.minsida.views.DeviationView;
 import com.heinrisch.minsida.views.TripView;
 import retrofit.http.Callback;
 import retrofit.http.RetrofitError;
@@ -39,6 +41,7 @@ public class ReseplanerareFragment extends Fragment implements View.OnLongClickL
   private LinearLayout rootViewGroup;
   private LinearLayout depaturesList;
   private ProgressBar progressBar;
+  private DeviationView deviationView;
 
   private String header;
   private int startSiteId;
@@ -86,6 +89,7 @@ public class ReseplanerareFragment extends Fragment implements View.OnLongClickL
     rootViewGroup = (LinearLayout) view.findViewById(R.id.root);
     depaturesList = (LinearLayout) view.findViewById(R.id.departuresList);
     progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+    deviationView = (DeviationView) view.findViewById(R.id.deviation);
 
     view.setOnLongClickListener(this);
     view.setOnClickListener(this);
@@ -127,6 +131,25 @@ public class ReseplanerareFragment extends Fragment implements View.OnLongClickL
         public void success(DPSDepartures result) {
           dpsDepartures = result;
           onDPSDepaturesReceived();
+        }
+
+        @Override
+        public void failure(RetrofitError retrofitError) {
+          stopTask();
+          Toast.makeText(getActivity(), "Failed", Toast.LENGTH_LONG).show();
+          retrofitError.getException().printStackTrace();
+          Log.e("Failed", retrofitError.getException().toString());
+          Log.e("Url:", retrofitError.getUrl());
+        }
+      });
+
+      DeviationFetcher.getDeviations(startSiteId, new Callback<Deviation>() {
+        @Override
+        public void success(Deviation deviation) {
+          if(deviation.GetDeviationsResponse.GetDeviationsResult.aWCFDeviation != null){
+            deviationView.setDeviation(deviation, getActivity());
+            deviationView.setVisibility(View.VISIBLE);
+          }
         }
 
         @Override
