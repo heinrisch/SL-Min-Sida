@@ -18,13 +18,17 @@
 					android:id="@+id/searchField"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:textColor="#000000"/>
+					android:textColor="#717171"
+					android:textCursorDrawable="@null"
+					android:singleLine="true"/>
 
 	<Button
 					android:id="@+id/searchButton"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:text="Sök"
+					android:gravity="center"
+					android:textColor="#717171"
 					/>
 </LinearLayout>
 

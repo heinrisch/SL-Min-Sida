@@ -36,11 +36,11 @@ public class RESTHandler {
   }
 
   public static void getDPSDepatures(int siteId, int timeWindow, Callback<DPSDepartures> callback) {
-    getHanlder().getDpsDepatures(siteId, timeWindow, APIKEY.API_KEY, callback);
+    getHanlder().getDpsDepatures(siteId, timeWindow, APIKEY.API_KEY_REAL_TIME, callback);
   }
 
   public static void getSites(String searchTerm, Callback<Sites> callback) {
-    getHanlder().getSite(searchTerm, APIKEY.API_KEY, callback);
+    getHanlder().getSite(searchTerm, APIKEY.API_KEY_REAL_TIME, callback);
   }
 
   public interface AsyncService {

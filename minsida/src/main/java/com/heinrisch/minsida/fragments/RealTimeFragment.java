@@ -30,7 +30,7 @@ import java.util.List;
  * Date: 3/9/13
  * Copyright (c) 2013 SBLA
  */
-public class RealTimeFragment extends Fragment implements View.OnLongClickListener{
+public class RealTimeFragment extends Fragment implements View.OnLongClickListener, View.OnClickListener {
   public static final String ARG_HEADER = "header";
   public static final String ARG_SITE = "site";
   public static final String ARG_TIME_WINDOW = "time-window";
@@ -87,18 +87,8 @@ public class RealTimeFragment extends Fragment implements View.OnLongClickListen
     TextView headerView = (TextView) view.findViewById(R.id.header);
     headerView.setText(header);
 
-    TextView refresh = (TextView) view.findViewById(R.id.refresh);
-    refresh.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        handler.removeCallbacks(countdown);
-        dpsDepartures = null;
-        depaturesList.removeAllViews();
-        refresh();
-      }
-    });
-
     view.setOnLongClickListener(this);
+    view.setOnClickListener(this);
 
     return view;
   }
@@ -172,7 +162,7 @@ public class RealTimeFragment extends Fragment implements View.OnLongClickListen
     } else if (seconds >= 0) {
       return "Nu";
     } else {
-      return "Borta";
+      return "Avgått";
     }
   }
 
@@ -204,12 +194,29 @@ public class RealTimeFragment extends Fragment implements View.OnLongClickListen
     editor.remove(id);
     editor.commit();
 
-
     FragmentTransaction transaction = getActivity().getFragmentManager().beginTransaction();
     transaction.remove(this);
     transaction.commit();
 
     return true;
+  }
+
+  @Override
+  public void onClick(View v) {
+    reload();
+  }
+
+  private void reload() {
+    handler.removeCallbacks(countdown);
+    dpsDepartures = null;
+    depaturesList.removeAllViews();
+    refresh();
+  }
+
+  @Override
+  public void onStop() {
+    super.onStop();
+    handler.removeCallbacks(countdown);
   }
 
   class Time {

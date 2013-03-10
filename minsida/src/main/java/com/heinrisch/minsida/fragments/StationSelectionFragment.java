@@ -117,7 +117,7 @@ public class StationSelectionFragment extends ListFragment{
 
       TextView textView = (TextView) rowView.findViewById(android.R.id.text1);
       textView.setText(sites.Site[position].Name);
-      textView.setTextColor(Color.BLACK);
+      textView.setTextColor(Color.parseColor("#717171"));
 
 
       return rowView;
