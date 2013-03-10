@@ -12,7 +12,7 @@ import java.lang.reflect.Type;
  * Date: 3/9/13
  * Copyright (c) SBLA
  */
-public class RESTHandler {
+public class DPSDeparturesFetcher {
   public static final String API_URL = "https://api.trafiklab.se/sl/realtid";
 
   private static AsyncService service;

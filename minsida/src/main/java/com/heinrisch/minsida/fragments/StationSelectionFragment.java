@@ -12,8 +12,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.heinrisch.minsida.DPSDeparturesFetcher;
 import com.heinrisch.minsida.R;
-import com.heinrisch.minsida.RESTHandler;
 import com.heinrisch.minsida.models.Sites;
 import retrofit.http.Callback;
 import retrofit.http.RetrofitError;
@@ -61,7 +61,7 @@ public class StationSelectionFragment extends ListFragment{
   @Override
   public void onStart() {
     super.onStart();
-    RESTHandler.getSites(searchTerm, new Callback<Sites>() {
+    DPSDeparturesFetcher.getSites(searchTerm, new Callback<Sites>() {
       @Override
       public void success(Sites sites) {
         listener.onSelectionLoaded();

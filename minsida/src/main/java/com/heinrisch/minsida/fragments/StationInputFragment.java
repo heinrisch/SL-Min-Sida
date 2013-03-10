@@ -47,4 +47,10 @@ public class StationInputFragment extends Fragment{
   public interface OnSearchListener {
     public void onSearch(String term);
   }
+
+  @Override
+  public void onStart() {
+    super.onStart();
+    searchField.requestFocus();
+  }
 }

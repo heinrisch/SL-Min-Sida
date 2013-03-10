@@ -17,7 +17,7 @@ import java.util.UUID;
  * Date: 3/9/13
  * Copyright (c) 2013 SBLA
  */
-public class NewComponentFragment extends Activity implements StationInputFragment.OnSearchListener, StationSelectionFragment.OnStationSelection {
+public class NewReseplanerareComponent extends Activity implements StationInputFragment.OnSearchListener, StationSelectionFragment.OnStationSelection {
   private final static String TAG_ACTIVE_FRAGMENT = "active-fragment";
 
   private ProgressBar progressBar;
@@ -62,13 +62,25 @@ public class NewComponentFragment extends Activity implements StationInputFragme
     stopTask();
   }
 
+  private String header = null;
+  private int startSite;
+
   @Override
   public void onSiteSelected(String name, int siteId) {
-    SharedPreferences settings = getSharedPreferences(MainActivity.SETTINGS, 0);
-    SharedPreferences.Editor editor = settings.edit();
-    editor.putString(UUID.randomUUID().toString(), MainActivity.TYPE_REALTID + "," + name + "," + siteId);
-    editor.commit();
+    if (header == null) {
+      header = name;
+      startSite = siteId;
 
-    finish();
+      FragmentTransaction transaction = getFragmentManager().beginTransaction();
+      transaction.replace(R.id.mainContainer, new StationInputFragment(), TAG_ACTIVE_FRAGMENT);
+      transaction.commit();
+
+    } else {
+      SharedPreferences settings = getSharedPreferences(MainActivity.SETTINGS, 0);
+      SharedPreferences.Editor editor = settings.edit();
+      editor.putString(UUID.randomUUID().toString(), MainActivity.TYPE_RESEPLANERARE + "," + header + "," + startSite + "," + siteId);
+      editor.commit();
+      finish();
+    }
   }
 }

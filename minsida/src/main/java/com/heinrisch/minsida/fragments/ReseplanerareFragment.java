@@ -13,29 +13,27 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.heinrisch.minsida.DPSDeparturesFetcher;
-import com.heinrisch.minsida.MainActivity;
-import com.heinrisch.minsida.R;
-import com.heinrisch.minsida.Tools;
+import com.heinrisch.minsida.*;
 import com.heinrisch.minsida.models.DPSDepartures;
+import com.heinrisch.minsida.models.Reseplanerare;
 import com.heinrisch.minsida.models.Time;
+import com.heinrisch.minsida.views.TripView;
 import retrofit.http.Callback;
 import retrofit.http.RetrofitError;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * User: henrik
  * Date: 3/9/13
  * Copyright (c) 2013 SBLA
  */
-public class RealTimeFragment extends Fragment implements View.OnLongClickListener, View.OnClickListener {
+public class ReseplanerareFragment extends Fragment implements View.OnLongClickListener, View.OnClickListener {
   public static final String ARG_HEADER = "header";
-  public static final String ARG_SITE = "site";
-  public static final String ARG_TIME_WINDOW = "time-window";
+  public static final String ARG_START_SITE = "startSite";
+  public static final String ARG_END_SITE = "endSite";
   public static final String ARG_ID = "id";
 
   private LinearLayout rootViewGroup;
@@ -43,21 +41,22 @@ public class RealTimeFragment extends Fragment implements View.OnLongClickListen
   private ProgressBar progressBar;
 
   private String header;
-  private int siteId;
-  private int timeWindow;
+  private int startSiteId;
+  private int endSiteId;
   private String id;
+  private Reseplanerare reseplanerare;
   private DPSDepartures dpsDepartures;
   private List<Time> countDowns;
   private Handler handler;
 
-  public static RealTimeFragment newInstance(String header, int siteId, int timeWindow, String Id) {
+  public static ReseplanerareFragment newInstance(String header, int startSiteId, int endSiteId, String Id) {
     Bundle args = new Bundle();
     args.putString(ARG_HEADER, header);
-    args.putInt(ARG_SITE, siteId);
-    args.putInt(ARG_TIME_WINDOW, timeWindow);
+    args.putInt(ARG_START_SITE, startSiteId);
+    args.putInt(ARG_END_SITE, endSiteId);
     args.putString(ARG_ID, Id);
 
-    RealTimeFragment fragment = new RealTimeFragment();
+    ReseplanerareFragment fragment = new ReseplanerareFragment();
     fragment.setArguments(args);
 
     return fragment;
@@ -69,8 +68,8 @@ public class RealTimeFragment extends Fragment implements View.OnLongClickListen
 
     Bundle args = getArguments();
     header = args.getString(ARG_HEADER);
-    siteId = args.getInt(ARG_SITE);
-    timeWindow = args.getInt(ARG_TIME_WINDOW);
+    startSiteId = args.getInt(ARG_START_SITE);
+    endSiteId = args.getInt(ARG_END_SITE);
     id = args.getString(ARG_ID);
 
     handler = new Handler();
@@ -80,14 +79,13 @@ public class RealTimeFragment extends Fragment implements View.OnLongClickListen
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.real_time_fragment, container, false);
+    View view = inflater.inflate(R.layout.reseplanerare_fragment, container, false);
 
+
+    ((TextView) view.findViewById(R.id.header)).setText(header);
     rootViewGroup = (LinearLayout) view.findViewById(R.id.root);
     depaturesList = (LinearLayout) view.findViewById(R.id.departuresList);
     progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
-
-    TextView headerView = (TextView) view.findViewById(R.id.header);
-    headerView.setText(header);
 
     view.setOnLongClickListener(this);
     view.setOnClickListener(this);
@@ -102,17 +100,16 @@ public class RealTimeFragment extends Fragment implements View.OnLongClickListen
   }
 
   private void refresh() {
-    if (dpsDepartures == null) {
+    if (reseplanerare == null) {
+      dpsDepartures = null;
       startTask();
-      DPSDeparturesFetcher.getDPSDepatures(siteId, timeWindow, new Callback<DPSDepartures>() {
+      Date oneMinuteAgo = new Date(new Date().getTime() - 60 * 1000);
+      ReseplanerareFetcher.getReseplanerare(startSiteId, endSiteId, Tools.DateFormatterHourMinutes.format(oneMinuteAgo), new Callback<Reseplanerare>() {
         @Override
-        public void success(DPSDepartures response) {
+        public void success(Reseplanerare result) {
           stopTask();
-          dpsDepartures = response;
-          if (dpsDepartures.DPS.Buses != null) {
-            Arrays.sort(dpsDepartures.DPS.Buses.DpsBus);
-          }
-          onDepaturesRecieved();
+          reseplanerare = result;
+          onReseplanerareReceived();
         }
 
         @Override
@@ -124,34 +121,67 @@ public class RealTimeFragment extends Fragment implements View.OnLongClickListen
           Log.e("Url:", retrofitError.getUrl());
         }
       });
+
+      DPSDeparturesFetcher.getDPSDepatures(startSiteId, 60, new Callback<DPSDepartures>() {
+        @Override
+        public void success(DPSDepartures result) {
+          dpsDepartures = result;
+          onDPSDepaturesReceived();
+        }
+
+        @Override
+        public void failure(RetrofitError retrofitError) {
+          stopTask();
+          Toast.makeText(getActivity(), "Failed", Toast.LENGTH_LONG).show();
+          retrofitError.getException().printStackTrace();
+          Log.e("Failed", retrofitError.getException().toString());
+          Log.e("Url:", retrofitError.getUrl());
+        }
+      });
+
     } else {
-      onDepaturesRecieved();
+      onReseplanerareReceived();
       stopTask();
     }
   }
 
-  private void onDepaturesRecieved() {
+  private void onDPSDepaturesReceived() {
+    if (reseplanerare != null) {
+      onReseplanerareReceived();
+    }
+  }
+
+  private void onReseplanerareReceived() {
     depaturesList.removeAllViews();
-    if (dpsDepartures.DPS.Buses == null) {
+    if (reseplanerare.HafasResponse.Trip == null) {
       return;
     }
     countDowns = new ArrayList<Time>();
     handler.removeCallbacks(countdown);
     long now = new Date().getTime();
-    for (DPSDepartures.DPSObject.BusesObject.DpsBusObject bus : dpsDepartures.DPS.Buses.DpsBus) {
-      View view = getActivity().getLayoutInflater().inflate(R.layout.depature_list_item, null);
+    for (Reseplanerare.HafasResponseObject.TripObject trip : reseplanerare.HafasResponse.Trip) {
+      TripView view = new TripView(getActivity());
+      view.setTrip(trip, dpsDepartures);
 
-      ((TextView) view.findViewById(R.id.destination)).setText(bus.Destination);
-      ((TextView) view.findViewById(R.id.lineNumber)).setText(String.valueOf(bus.LineNumber));
-
-      TextView displayTime = (TextView) view.findViewById(R.id.displayTime);
-      displayTime.setText(Tools.getTimeToDepatureString(now, bus.getExpectedDate()));
-      countDowns.add(new Time(displayTime, bus.getExpectedDate()));
-
+      countDowns.addAll(view.getTimes());
       depaturesList.addView(view);
     }
 
     handler.postDelayed(countdown, 1000);
+  }
+
+  public String getTimeToDepatureString(long now, long depatureTime) {
+    long seconds = ((depatureTime - now) / (1000));
+
+    long minutes = seconds / 60;
+
+    if (seconds >= 60) {
+      return Math.abs(minutes) + " min";
+    } else if (seconds >= 0) {
+      return "Nu";
+    } else {
+      return "Avgått";
+    }
   }
 
   private void stopTask() {
@@ -169,7 +199,7 @@ public class RealTimeFragment extends Fragment implements View.OnLongClickListen
     public void run() {
       long now = new Date().getTime();
       for (Time t : countDowns) {
-        t.view.setText(Tools.getTimeToDepatureString(now, t.time));
+        t.view.setText(getTimeToDepatureString(now, t.time));
       }
       handler.postDelayed(this, 1000);
     }
@@ -196,7 +226,7 @@ public class RealTimeFragment extends Fragment implements View.OnLongClickListen
 
   private void reload() {
     handler.removeCallbacks(countdown);
-    dpsDepartures = null;
+    reseplanerare = null;
     depaturesList.removeAllViews();
     refresh();
   }

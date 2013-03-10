@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+							android:orientation="vertical"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:id="@+id/root"
+							android:gravity="center">
+
+	<LinearLayout
+					android:orientation="horizontal"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:gravity="center">
+
+		<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:id="@+id/lineNumber"
+						android:textStyle="bold"
+						android:text="627"
+						android:textSize="14sp"
+						android:layout_marginRight="4dp"/>
+
+		<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:id="@+id/destination"
+						android:text="Sollentuna Station"
+						android:textSize="14sp"/>
+
+		<LinearLayout
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:orientation="horizontal"
+						android:layout_weight="1"
+						android:gravity="right">
+
+			<TextView
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:id="@+id/realtid"
+							android:text="15 min"
+							android:textSize="14sp"
+							android:layout_marginRight="6dp"
+							android:textColor="#61b549"
+							android:textStyle="bold"
+							android:visibility="gone"/>
+
+			<TextView
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:text="("
+							android:textSize="14sp"/>
+			<TextView
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:id="@+id/arrival"
+							android:text="15 min"
+							android:textSize="14sp"/>
+			<TextView
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:text=")"
+							android:textSize="14sp"/>
+		</LinearLayout>
+	</LinearLayout>
+
+	<LinearLayout
+					android:orientation="vertical"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/subTripContainer"
+					android:gravity="center"/>
+
+</LinearLayout>
+

@@ -32,6 +32,7 @@ public class DPSDepartures {
         public String DisplayTime;
 
         public Date expectedDate;
+        public Date timeTableDate;
 
         public long getExpectedDate() {
           if (expectedDate == null) {
@@ -42,6 +43,17 @@ public class DPSDepartures {
             }
           }
           return expectedDate.getTime();
+        }
+
+        public long getTimeTableDate() {
+          if (timeTableDate == null) {
+            try {
+              timeTableDate = SLDateFormat.parse(TimeTabledDateTime);
+            } catch (ParseException e) {
+              e.printStackTrace();
+            }
+          }
+          return timeTableDate.getTime();
         }
 
         @Override

@@ -23,5 +23,6 @@
 		</activity>
 
 		<activity android:name=".fragments.NewComponentFragment"/>
+		<activity android:name=".fragments.NewReseplanerareComponent"/>
 	</application>
 </manifest>

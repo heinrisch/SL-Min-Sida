@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-	<item android:id="@+id/menu_add_item"
-				android:title="Lägg till ny"/>
+	<item android:id="@+id/menu_add_realtid"
+				android:title="Lägg till Realtid"/>
+	<item android:id="@+id/menu_add_reseplanerare"
+				android:title="Lägg till reseplanerare"/>
 </menu>
