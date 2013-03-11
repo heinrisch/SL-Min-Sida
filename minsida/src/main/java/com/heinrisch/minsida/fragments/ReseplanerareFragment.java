@@ -193,20 +193,6 @@ public class ReseplanerareFragment extends Fragment implements View.OnLongClickL
     handler.postDelayed(countdown, 1000);
   }
 
-  public String getTimeToDepatureString(long now, long depatureTime) {
-    long seconds = ((depatureTime - now) / (1000));
-
-    long minutes = seconds / 60;
-
-    if (seconds >= 60) {
-      return Math.abs(minutes) + " min";
-    } else if (seconds >= 0) {
-      return "Nu";
-    } else {
-      return "Avgått";
-    }
-  }
-
   private void stopTask() {
     progressBar.setVisibility(View.GONE);
     depaturesList.setVisibility(View.VISIBLE);
@@ -222,7 +208,7 @@ public class ReseplanerareFragment extends Fragment implements View.OnLongClickL
     public void run() {
       long now = new Date().getTime();
       for (Time t : countDowns) {
-        t.view.setText(getTimeToDepatureString(now, t.time));
+        t.view.setText(Tools.getTimeToDepatureString(now, t.time));
       }
       handler.postDelayed(this, 1000);
     }

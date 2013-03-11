@@ -22,6 +22,7 @@ public class SummaryObject {
   public String Changes;
   public String Duration;
   public TransportObject Transport;
+  public RTUMessagesObject RTUMessages;
 
   public long getArrivalTime(){
     return getLongFromString(ArrivalDate + "T" + ArrivalTime.text);
@@ -50,5 +51,9 @@ public class SummaryObject {
   public class TextObject {
     @SerializedName("#text")
     public String text;
+  }
+
+  public class RTUMessagesObject{
+    public String RTUMessage;
   }
 }

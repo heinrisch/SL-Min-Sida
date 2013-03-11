@@ -2,6 +2,7 @@ package com.heinrisch.minsida.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -47,6 +48,12 @@ public class TripView extends LinearLayout {
 
     SummaryObject firstSubTrip = trip.SubTrip[0];
     int lineNumber = firstSubTrip.Transport.Line;
+
+    if(firstSubTrip.RTUMessages != null){
+      TextView rtum = (TextView) findViewById(R.id.rtum);
+      rtum.setText(firstSubTrip.RTUMessages.RTUMessage);
+      rtum.setVisibility(VISIBLE);
+    }
 
     ((TextView) findViewById(R.id.lineNumber)).setText(String.valueOf(lineNumber));
     ((TextView) findViewById(R.id.destination)).setText(firstSubTrip.Transport.Towards);

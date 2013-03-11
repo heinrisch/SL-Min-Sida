@@ -3,6 +3,7 @@ package com.heinrisch.minsida.models;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -49,6 +50,15 @@ public class DPSDepartures {
           if (timeTableDate == null) {
             try {
               timeTableDate = SLDateFormat.parse(TimeTabledDateTime);
+              //Skip seconds becuase reseplanerare does not consider them
+              Calendar c = Calendar.getInstance();
+              c.setTime(timeTableDate);
+              //However, they to round their numbers
+              if(c.get(Calendar.SECOND) > 30){
+                c.add(Calendar.MINUTE, 1);
+              }
+              c.set(Calendar.SECOND, 0);
+              timeTableDate = c.getTime();
             } catch (ParseException e) {
               e.printStackTrace();
             }

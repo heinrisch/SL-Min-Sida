@@ -2,7 +2,7 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 	<item android:id="@+id/menu_add_realtid"
-				android:title="Lägg till Realtid"/>
+				android:title="Lägg till realtid"/>
 	<item android:id="@+id/menu_add_reseplanerare"
 				android:title="Lägg till reseplanerare"/>
 </menu>

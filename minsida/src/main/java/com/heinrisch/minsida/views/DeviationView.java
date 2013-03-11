@@ -56,6 +56,8 @@ public class DeviationView extends LinearLayout {
       }
     });
 
+    header.setVisibility(View.VISIBLE);
+
 
   }
 
